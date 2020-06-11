@@ -82,7 +82,19 @@ class MessageExtraction {
   Map<String, MainMessage> parseFile(File file, [bool transformer = false]) {
     // Optimization to avoid parsing files we're sure don't contain any messages.
     String contents = file.readAsStringSync();
-    origin = file.path;
+    parseFileContent(contents, file.path, transformer);
+  }
+
+  /// Parse the source of the Dart program from a file with content [fileContent] and path [path]
+  /// and return a Map from message names to [IntlMessage] instances.
+  ///
+  /// If [transformer] is true, assume the transformer will supply any "name"
+  /// and "args" parameters required in Intl.message calls.
+  Map<String, MainMessage> parseFileContent(String fileContent, String filepath,
+      [bool transformer = false]) {
+    // Optimization to avoid parsing files we're sure don't contain any messages.
+    String contents = fileContent;
+    origin = filepath;
     if (contents.contains("Intl.")) {
       root = _parseCompilationUnit(contents, origin);
     } else {
@@ -355,8 +367,7 @@ class MessageFindingVisitor extends GeneralizingAstVisitor {
     var extractionResult = extract(message, arguments);
     if (extractionResult == null) return null;
 
-    for (var namedArgument
-        in arguments.whereType<NamedExpression>()) {
+    for (var namedArgument in arguments.whereType<NamedExpression>()) {
       var name = namedArgument.name.label.name;
       var exp = namedArgument.expression;
       var evaluator = new ConstantEvaluator();
