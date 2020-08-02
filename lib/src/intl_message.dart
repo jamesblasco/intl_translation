@@ -417,7 +417,13 @@ class VariableSubstitution extends Message {
   toCode() => "\${${variableName}}";
   toJson() => index;
   toString() => "VariableSubstitution($index)";
-  String expanded([Function f = _nullTransform]) => f(this, index);
+  String expanded([Function f = _nullTransform]) => f(this, Variable(variableName));
+}
+
+class Variable {
+  final String variableName;
+
+  Variable(this.variableName);
 }
 
 class MainMessage extends ComplexMessage {
