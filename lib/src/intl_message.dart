@@ -378,6 +378,7 @@ class VariableSubstitution extends Message {
   /// save it separately and look it up case-insensitively once the parent
   /// (and its arguments) are definitely available.
   VariableSubstitution.named(String name, Message parent) : super(parent) {
+    _variableName = name;
     _variableNameUpper = name.toUpperCase();
   }
 
